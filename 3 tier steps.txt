@@ -1,0 +1,125 @@
+1. Create VPC
+
+2. Create 9 subnets
+	3 public subnet for jump server
+	3 private subnet for server-a
+	3 private subnet for server-b
+
+3. Create 3 route tables
+	do Explicite associate all subnets into the route table
+
+4. Create ineternet gateway
+	Attach to VPC
+	do entry in public route table
+
+5. Create NAT Gateway
+	Assign public-subnet-1	
+	Allocate elastic IP
+	do entry in both private route table
+
+6. Create instances.
+	a. public-Jump server (Public & Private)
+	b. private-App-server (Private)
+	c. private-db-server  (private)
+
+7. Install Lamp server into the both Private instance via getting SSH from moba with the help of public instance
+	Install Lamp server
+	Set File permission
+	Install phpMyAdmin
+
+8. Create Target group
+	Register 2 target of both private instances. (us-east-2a, us-east-2b)
+
+9. Create Application Load balancer
+	us-east-2a (public-web-subnet-1)
+	us-east-2b (public-web-subnet-2)
+	Create new security group
+
+10. echo "Hello chetan" > /var/www/html/index.html
+    echo "Hello Jarvis" > /var/www/html/index.html
+		write into both private instance.
+
+11. try ti hit the ALB_DNS/index.html
+
+12. Crate DATABASE
+
+13. Create subnet group
+	Availability zone 2a & 2b
+	Subnet for db (172.20.7.0/24, 172.20.8.0/24)
+
+14. Create database 
+	Engine:- mysql
+	Masterusername:- admin
+	VPC
+	Attach created "Database-subnet-group" into our database
+	Create new security group
+	Create now DB.
+
+15. Go to security group of our Database.
+	add rule:- Custom TCP --> 3306 --> custom --> "private-app-server" security group entry.
+	Aadd rule:- HTTP-->80-->Anywhere
+
+16. rename the file
+	cd /var/www/html/phpMyAdmin/
+	ls
+	mv config.sample.inc.php config.inc.php
+	ls
+	vim config.inc.php
+	here paste "endpoint of RDS database" instead of "localhost"
+
+17. Go to created target group of database and enable stickiness.
+	Atttributes --> Edit --> Enable Stickiness
+
+18. Hit the DNS/phpMyAdmin
+	login with the database master username
+	check weather database created or not ?
+
+19.Point Domain Name to AWS Application Load Blancer [ Route53 ] --> Freenom.com
+	Create Hosted zone with DOMAIN Name
+	Create A record (wwww)
+	Set Alias--> Application Load Blancer-->select Region-->select Load balacner
+	Record type:- A record
+	Unchek the Evaluate Target HEALTH
+
+20. our website is not secured so now we issue SSL certificate from Amazon sertificate Manager and attach to our Domain then it becomes http  https
+
+
+
+
+
+
+
+
+
+............................................................................................
+CURRENTLY SSL Certificate in Testing
+............................................................................................
+
+
+
+
+Target group 2 private instance 
+	--> HTTP 80
+
+Create Route53 Hosted Zone
+	NS Records copy and paste to freenom.com
+
+SSL Issue
+	Apply to CNAM --> SSL Active
+
+Load Balancer create 
+	HTTPS 443 --> Attach SSL certificate
+
+Create A Record with Alias [Applicaiton Load Balancer]
+	A record created
+	www.somkuwar.ml
+
+
+
+
+
+		
+	
+	
+
+	
